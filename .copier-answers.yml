@@ -1,0 +1,21 @@
+# Changes here will be overwritten by Copier
+_commit: d360da4
+_src_path: gh:browniebroke/pypackage-template
+copyright_year: '2026'
+documentation: true
+email: daniel@mohni.info
+full_name: Daniel M
+github_username: dan-s-github
+has_cli: false
+initial_commit: false
+is_django_package: false
+open_source_license: MIT
+open_with_editor: false
+package_name: jaalee_ble
+project_name: Jaalee BLE
+project_short_description: Python library for Jaalee BLE devices
+project_slug: jaalee-ble
+run_uv_sync: false
+setup_github: false
+setup_pre_commit: false
+
