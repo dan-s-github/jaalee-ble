@@ -77,10 +77,17 @@ jobs:
       contents: write
 
     steps:
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.sha }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Checkout commit for release
         run: |
@@ -100,7 +107,7 @@ jobs:
         if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'dev')
         id: release
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v3
@@ -116,5 +123,5 @@ jobs:
         uses: python-semantic-release/publish-action@v10
         if: steps.release.outputs.released == 'true'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
           tag: ${{ steps.release.outputs.tag }}

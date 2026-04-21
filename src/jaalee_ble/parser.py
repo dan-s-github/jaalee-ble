@@ -81,7 +81,8 @@ class JaaleeBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
 
     def _parse_compact(self, payload: bytes, address: str) -> bool:
-        """Parse the 11 or 12-byte Jaalee compact manufacturer payload.
+        """
+        Parse the 11 or 12-byte Jaalee compact manufacturer payload.
 
         The payload embeds the device MAC address for verification.
         Returns True if the embedded MAC matches the advertising device address.

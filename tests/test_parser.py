@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+import json
 import struct
-from uuid import UUID
+from pathlib import Path
+from typing import Any
 
+import pytest
 from bleak.backends.device import BLEDevice
 from bluetooth_data_tools import monotonic_time_coarse
 from habluetooth import BluetoothServiceInfoBleak
 
 from jaalee_ble import JaaleeBluetoothDeviceData
+
+_SAMPLE_PACKAGES_PATH = Path(__file__).parent / "test_ble_advertisements.json"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -69,15 +74,16 @@ def make_ibeacon_payload(
     batt: int = BATT_85,
     reserved: int = 0,
 ) -> bytes:
-    """Build a 24-byte Apple manufacturer payload in Jaalee iBeacon format.
+    """
+    Build a 24-byte Apple manufacturer payload in Jaalee iBeacon format.
 
     Layout:
-      [0:16]  – iBeacon preamble / proximity UUID prefix (arbitrary)
-      [16:18] – Jaalee UUID marker (0xF5, 0x25)
-      [18:20] – raw temperature (big-endian uint16)
-      [20:22] – raw humidity   (big-endian uint16)
-      [22]    – reserved byte
-      [23]    – battery percent
+      [0:16]  - iBeacon preamble / proximity UUID prefix (arbitrary)
+      [16:18] - Jaalee UUID marker (0xF5, 0x25)
+      [18:20] - raw temperature (big-endian uint16)
+      [20:22] - raw humidity   (big-endian uint16)
+      [22]    - reserved byte
+      [23]    - battery percent
     """
     prefix = b"\x02\x15" + b"\x00" * 14  # 16 bytes: iBeacon type+length + UUID prefix
     sensor = struct.pack(">HHBB", raw_temp, raw_humi, reserved, batt)
@@ -91,29 +97,28 @@ def make_compact_payload(
     batt: int = BATT_72,
     extra: bytes = b"",
 ) -> bytes:
-    """Build an 11 or 12-byte compact manufacturer payload.
+    """
+    Build an 11 or 12-byte compact manufacturer payload.
 
     Layout:
-      [0]    – battery percent
-      [1:7]  – device MAC address stored in reverse byte order
-      [7:9]  – raw temperature (big-endian uint16)
-      [9:11] – raw humidity   (big-endian uint16)
-      [11]   – optional extra byte (for 12-byte variant)
+      [0]    - battery percent
+      [1:7]  - device MAC address stored in reverse byte order
+      [7:9]  - raw temperature (big-endian uint16)
+      [9:11] - raw humidity   (big-endian uint16)
+      [11]   - optional extra byte (for 12-byte variant)
     """
     sensor = struct.pack(">HH", raw_temp, raw_humi)
     return bytes([batt]) + mac_reversed + extra + sensor
 
 
 # ---------------------------------------------------------------------------
-# Tests – iBeacon format
+# Tests - iBeacon format
 # ---------------------------------------------------------------------------
 
 
 def test_ibeacon_format_parses_temperature_humidity_battery() -> None:
-    """iBeacon advertisement yields correct temp, humi, and battery."""
-    service_info = make_service_info(
-        manufacturer_data={0x004C: make_ibeacon_payload()}
-    )
+    """IBeacon advertisement yields correct temp, humi, and battery."""
+    service_info = make_service_info(manufacturer_data={0x004C: make_ibeacon_payload()})
 
     result = JaaleeBluetoothDeviceData().update(service_info)
 
@@ -151,15 +156,13 @@ def test_ibeacon_format_wrong_payload_length_ignored() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Tests – compact format
+# Tests - compact format
 # ---------------------------------------------------------------------------
 
 
 def test_compact_format_11_bytes_parses_correctly() -> None:
     """11-byte compact advertisement yields correct temp, humi, and battery."""
-    service_info = make_service_info(
-        manufacturer_data={0x05D8: make_compact_payload()}
-    )
+    service_info = make_service_info(manufacturer_data={0x05D8: make_compact_payload()})
 
     result = JaaleeBluetoothDeviceData().update(service_info)
 
@@ -191,7 +194,9 @@ def test_compact_format_mac_mismatch_returns_no_data() -> None:
     """Compact advertisement whose embedded MAC mismatches the device is ignored."""
     wrong_mac_reversed = bytes([0x11, 0x22, 0x33, 0x44, 0x55, 0x66])
     service_info = make_service_info(
-        manufacturer_data={0x05D8: make_compact_payload(mac_reversed=wrong_mac_reversed)}
+        manufacturer_data={
+            0x05D8: make_compact_payload(mac_reversed=wrong_mac_reversed)
+        }
     )
 
     result = JaaleeBluetoothDeviceData().update(service_info)
@@ -200,7 +205,7 @@ def test_compact_format_mac_mismatch_returns_no_data() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Tests – edge cases
+# Tests - edge cases
 # ---------------------------------------------------------------------------
 
 
@@ -216,9 +221,71 @@ def test_no_manufacturer_data_returns_no_data() -> None:
 def test_unrecognised_manufacturer_data_returns_no_data() -> None:
     """Manufacturer data that matches no known format is silently ignored."""
     service_info = make_service_info(
-        manufacturer_data={0x1234: bytes(8)}  # 8 bytes – not 11, 12, or 24
+        manufacturer_data={0x1234: bytes(8)}  # 8 bytes - not 11, 12, or 24
     )
 
     result = JaaleeBluetoothDeviceData().update(service_info)
 
     assert not result.entity_values
+
+
+# ---------------------------------------------------------------------------
+# Tests - sample_packages.json
+# ---------------------------------------------------------------------------
+
+_SAMPLES = json.loads(_SAMPLE_PACKAGES_PATH.read_text())
+
+
+def _service_info_from_sample(sample: Any) -> BluetoothServiceInfoBleak:
+    """Convert a sample_packages.json entry to a BluetoothServiceInfoBleak."""
+    address = sample["address"]
+    manufacturer_data = {
+        int(k): bytes.fromhex(v) for k, v in sample["manufacturer_data"].items()
+    }
+    return BluetoothServiceInfoBleak(
+        name=sample["name"],
+        address=address,
+        rssi=sample["rssi"],
+        service_uuids=sample.get("service_uuids", []),
+        service_data={},
+        manufacturer_data=manufacturer_data,
+        device=BLEDevice(address=address, name=sample["name"], details={}),
+        advertisement=None,
+        connectable=sample.get("connectable", True),
+        time=monotonic_time_coarse(),
+        source=sample.get("source", "local"),
+        tx_power=sample.get("tx_power", 0),
+    )
+
+
+@pytest.mark.parametrize(
+    "sample",
+    _SAMPLES,
+    ids=[f"{s['address']}[{i}]" for i, s in enumerate(_SAMPLES)],
+)
+def test_sample_packages_parse_sensor_values(sample: Any) -> None:
+    """Each entry in sample_packages.json decodes to valid sensor readings."""
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData().update(service_info)
+
+    assert result.entity_values, "Expected sensor values but got none"
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    print(
+        f"\n  {sample['address']}  rssi={sample['rssi']}dBm"
+        f"  temp={values.get('temperature')}°C"
+        f"  humi={values.get('humidity')}%"
+        f"  batt={values.get('battery')}%"
+    )
+
+    assert "temperature" in values
+    assert "humidity" in values
+    assert "battery" in values
+    assert -40.0 <= values["temperature"] <= 85.0, (
+        f"Temperature out of range: {values['temperature']}"
+    )
+    assert 0.0 <= values["humidity"] <= 100.0, (
+        f"Humidity out of range: {values['humidity']}"
+    )
+    assert 0 <= values["battery"] <= 100, f"Battery out of range: {values['battery']}"
