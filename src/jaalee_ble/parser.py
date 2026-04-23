@@ -8,7 +8,7 @@ from struct import Struct
 from bluetooth_data_tools import short_address
 from bluetooth_sensor_state_data import BluetoothData
 from habluetooth import BluetoothServiceInfoBleak
-from sensor_state_data import SensorLibrary
+from sensor_state_data import SensorDeviceClass, SensorLibrary, Units
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,8 +27,11 @@ _IBEACON_PAYLOAD_LEN = 24
 # Expected lengths of the manufacturer data payload for the compact JHT format.
 _COMPACT_PAYLOAD_LENS = frozenset({11, 12})
 
+# Sensor key for the iBeacon Tx Power field (byte 22 of the Apple manufacturer payload).
+_IBEACON_TX_POWER_KEY = "tx_power"
+
 # Struct unpackers (big-endian)
-_UNPACK_IBEACON = Struct(">HHBB").unpack  # raw_temp, raw_humi, reserved, batt
+_UNPACK_IBEACON = Struct(">HHbB").unpack  # raw_temp, raw_humi, tx_power, batt
 _UNPACK_COMPACT = Struct(">HH").unpack  # raw_temp, raw_humi
 
 
@@ -69,7 +72,7 @@ class JaaleeBluetoothDeviceData(BluetoothData):
 
     def _parse_ibeacon(self, payload: bytes, address: str) -> None:
         """Parse the 24-byte Jaalee iBeacon manufacturer payload."""
-        raw_temp, raw_humi, _, batt = _UNPACK_IBEACON(payload[18:])
+        raw_temp, raw_humi, tx_power, batt = _UNPACK_IBEACON(payload[18:])
         temp, humi = _decode_temp_humi(raw_temp, raw_humi)
 
         self._setup_device(address)
@@ -79,6 +82,13 @@ class JaaleeBluetoothDeviceData(BluetoothData):
         self.update_predefined_sensor(SensorLibrary.HUMIDITY__PERCENTAGE, humi)
         self.set_precision(0)
         self.update_predefined_sensor(SensorLibrary.BATTERY__PERCENTAGE, batt)
+        self.set_precision(0)
+        self.update_sensor(
+            key=_IBEACON_TX_POWER_KEY,
+            native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+            native_value=tx_power,
+            device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+        )
 
     def _parse_compact(self, payload: bytes, address: str) -> bool:
         """

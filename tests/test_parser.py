@@ -72,7 +72,7 @@ def make_ibeacon_payload(
     raw_temp: int = RAW_TEMP_25,
     raw_humi: int = RAW_HUMI_60,
     batt: int = BATT_85,
-    reserved: int = 0,
+    tx_power: int = 0,
 ) -> bytes:
     """
     Build a 24-byte Apple manufacturer payload in Jaalee iBeacon format.
@@ -82,11 +82,11 @@ def make_ibeacon_payload(
       [16:18] - Jaalee UUID marker (0xF5, 0x25)
       [18:20] - raw temperature (big-endian uint16)
       [20:22] - raw humidity   (big-endian uint16)
-      [22]    - reserved byte
+      [22]    - Tx Power (signed int8, dBm)
       [23]    - battery percent
     """
     prefix = b"\x02\x15" + b"\x00" * 14  # 16 bytes: iBeacon type+length + UUID prefix
-    sensor = struct.pack(">HHBB", raw_temp, raw_humi, reserved, batt)
+    sensor = struct.pack(">HHbB", raw_temp, raw_humi, tx_power, batt)
     return prefix + _IBEACON_MARKER + sensor  # 16 + 2 + 6 = 24 bytes
 
 
@@ -131,6 +131,18 @@ def test_ibeacon_format_parses_temperature_humidity_battery() -> None:
     assert values["temperature"] == 25.0
     assert values["humidity"] == 60.0
     assert values["battery"] == 85
+
+
+def test_ibeacon_format_parses_tx_power() -> None:
+    """IBeacon advertisement yields correct Tx Power from byte 22."""
+    service_info = make_service_info(
+        manufacturer_data={0x004C: make_ibeacon_payload(tx_power=-53)}
+    )
+
+    result = JaaleeBluetoothDeviceData().update(service_info)
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+    assert values["tx_power"] == -53
 
 
 def test_ibeacon_format_wrong_marker_ignored() -> None:
