@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0-rc.2 (2026-04-23)
+
+### Features
+
+- Expose ibeacon tx power sensor ([`0dce3cb`](https://github.com/dan-s-github/jaalee-ble/commit/0dce3cbafb86c2485945404e3bb6ce299a0c7010))
+
 ## v1.0.0-rc.1 (2026-04-21)
 
 ### Features
