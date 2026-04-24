@@ -2,13 +2,13 @@
 
 <p align="center">
   <a href="https://github.com/dan-s-github/jaalee-ble/actions/workflows/ci.yml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/actions/workflow/status/dan-s-github/jaalee_ble/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
+    <img src="https://img.shields.io/github/actions/workflow/status/dan-s-github/jaalee-ble/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
   </a>
   <a href="https://jaalee-ble.readthedocs.io">
-    <img src="https://img.shields.io/readthedocs/jaalee_ble.svg?logo=read-the-docs&logoColor=fff&style=flat-square" alt="Documentation Status">
+    <img src="https://img.shields.io/readthedocs/jaalee-ble.svg?logo=read-the-docs&logoColor=fff&style=flat-square" alt="Documentation Status">
   </a>
-  <a href="https://codecov.io/gh/dan-s-github/jaalee_ble">
-    <img src="https://img.shields.io/codecov/c/github/dan-s-github/jaalee_ble.svg?logo=codecov&logoColor=fff&style=flat-square" alt="Test coverage percentage">
+  <a href="https://codecov.io/gh/dan-s-github/jaalee-ble">
+    <img src="https://img.shields.io/codecov/c/github/dan-s-github/jaalee-ble.svg?logo=codecov&logoColor=fff&style=flat-square" alt="Test coverage percentage">
   </a>
 </p>
 <p align="center">
@@ -23,11 +23,11 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://pypi.org/project/jaalee_ble/">
-    <img src="https://img.shields.io/pypi/v/jaalee_ble.svg?logo=python&logoColor=fff&style=flat-square" alt="PyPI Version">
+  <a href="https://pypi.org/project/jaalee-ble/">
+    <img src="https://img.shields.io/pypi/v/jaalee-ble.svg?logo=python&logoColor=fff&style=flat-square" alt="PyPI Version">
   </a>
-  <img src="https://img.shields.io/pypi/pyversions/jaalee_ble.svg?style=flat-square&logo=python&amp;logoColor=fff" alt="Supported Python versions">
-  <img src="https://img.shields.io/pypi/l/jaalee_ble.svg?style=flat-square" alt="License">
+  <img src="https://img.shields.io/pypi/pyversions/jaalee-ble.svg?style=flat-square&logo=python&amp;logoColor=fff" alt="Supported Python versions">
+  <img src="https://img.shields.io/pypi/l/jaalee-ble.svg?style=flat-square" alt="License">
 </p>
 
 ---

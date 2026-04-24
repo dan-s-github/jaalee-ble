@@ -43,7 +43,7 @@ Ready to contribute? Here's how to set yourself up for local development.
 2. Clone your fork locally:
 
    ```shell
-   $ git clone git@github.com:your_name_here/jaalee_ble.git
+   $ git clone git@github.com:your_name_here/jaalee-ble.git
    ```
 
 3. Install the project dependencies with [uv](https://docs.astral.sh/uv/):
