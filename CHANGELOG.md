@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0-rc.4 (2026-04-24)
+
+### Bug fixes
+
+- Align remaining jaalee naming references ([`ae8c00d`](https://github.com/dan-s-github/jaalee-ble/commit/ae8c00dc5e11d065c76eb5816508b4cb77e9e26f))
+
 ## v1.0.0-rc.3 (2026-04-24)
 
 ### Bug fixes
