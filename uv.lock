@@ -779,7 +779,7 @@ wheels = [
 
 [[package]]
 name = "jaalee-ble"
-version = "1.0.0rc5"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "bluetooth-data-tools" },
