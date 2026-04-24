@@ -1,4 +1,4 @@
-# jaalee_ble
+# jaalee-ble
 
 <p align="center">
   <a href="https://github.com/dan-s-github/jaalee-ble/actions/workflows/ci.yml?query=branch%3Amain">
@@ -44,7 +44,7 @@ Python library for Jaalee BLE devices
 
 Install this via pip (or your favourite package manager):
 
-`pip install jaalee_ble`
+`pip install jaalee-ble`
 
 ## Contributors ✨
 
