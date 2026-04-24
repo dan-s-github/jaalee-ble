@@ -1,0 +1,104 @@
+[
+  {
+    "name": "FE:0E:A2:CC:C4:1F",
+    "address": "FE:0E:A2:CC:C4:1F",
+    "rssi": -87,
+    "manufacturer_data": {
+      "76": "0215ebefd08370a247c89837e7b5634df52567e48d2ecb64"
+    },
+    "service_data": {
+      "0000f525-0000-1000-8000-00805f9b34fb": "641fc4cca20efe67e48d2e"
+    },
+    "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+    "source": "08:A6:F7:BF:1B:4E",
+    "connectable": true,
+    "time": 1776671721.0837953,
+    "tx_power": 0,
+    "raw": "0201041bff4c000215ebefd08370a247c89837e7b5634df52567e48d2ecb64020a00030325f50e1625f5641fc4cca20efe67e48d2e"
+  },
+  {
+    "name": "FE:0E:A2:CC:C4:1F",
+    "address": "FE:0E:A2:CC:C4:1F",
+    "rssi": -80,
+    "manufacturer_data": {
+      "76": "0215ebefd08370a247c89837e7b5634df525675c8676cb64"
+    },
+    "service_data": {
+      "0000f525-0000-1000-8000-00805f9b34fb": "641fc4cca20efe675c8676"
+    },
+    "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+    "source": "C0:49:EF:D5:37:9A",
+    "connectable": true,
+    "time": 1776671909.9983342,
+    "tx_power": 0,
+    "raw": "0201041bff4c000215ebefd08370a247c89837e7b5634df525675c8676cb64020a00030325f50e1625f5641fc4cca20efe675c8676"
+  },
+  {
+    "name": "FE:0E:A2:CC:C4:1F",
+    "address": "FE:0E:A2:CC:C4:1F",
+    "rssi": -77,
+    "manufacturer_data": {
+      "76": "0215ebefd08370a247c89837e7b5634df52567248532cb64"
+    },
+    "service_data": {
+      "0000f525-0000-1000-8000-00805f9b34fb": "641fc4cca20efe67248532"
+    },
+    "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+    "source": "C0:49:EF:D5:37:9A",
+    "connectable": true,
+    "time": 1776672032.5134416,
+    "tx_power": 0,
+    "raw": "0201041bff4c000215ebefd08370a247c89837e7b5634df52567248532cb64020a00030325f50e1625f5641fc4cca20efe67248532"
+  },
+  {
+    "name": "FE:0E:A2:CC:C4:1F",
+    "address": "FE:0E:A2:CC:C4:1F",
+    "rssi": -78,
+    "manufacturer_data": {
+      "76": "0215ebefd08370a247c89837e7b5634df52566d88216cb64"
+    },
+    "service_data": {
+      "0000f525-0000-1000-8000-00805f9b34fb": "641fc4cca20efe66d88216"
+    },
+    "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+    "source": "08:A6:F7:BF:1B:4E",
+    "connectable": true,
+    "time": 1776672898.7909343,
+    "tx_power": 0,
+    "raw": "0201041bff4c000215ebefd08370a247c89837e7b5634df52566d88216cb64020a00030325f50e1625f5641fc4cca20efe66d88216"
+  },
+  {
+    "name": "FE:0E:A2:CC:C4:1F",
+    "address": "FE:0E:A2:CC:C4:1F",
+    "rssi": -85,
+    "manufacturer_data": {
+      "76": "0215ebefd08370a247c89837e7b5634df525676c7edacb64"
+    },
+    "service_data": {
+      "0000f525-0000-1000-8000-00805f9b34fb": "641fc4cca20efe676c7eda"
+    },
+    "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+    "source": "C0:49:EF:D5:37:9A",
+    "connectable": true,
+    "time": 1776674550.6258135,
+    "tx_power": null,
+    "raw": "0201041bff4c000215ebefd08370a247c89837e7b5634df525676c7edacb64030325f50e1625f5641fc4cca20efe676c7eda"
+  },
+  {
+    "name": "FE:0E:A2:CC:C4:1F",
+    "address": "FE:0E:A2:CC:C4:1F",
+    "rssi": -83,
+    "manufacturer_data": {
+      "76": "0215ebefd08370a247c89837e7b5634df52567b87d4ecb64"
+    },
+    "service_data": {
+      "0000f525-0000-1000-8000-00805f9b34fb": "641fc4cca20efe67b87d4e"
+    },
+    "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+    "source": "C0:49:EF:D5:37:9A",
+    "connectable": true,
+    "time": 1776675880.9472587,
+    "tx_power": null,
+    "raw": "0201041bff4c000215ebefd08370a247c89837e7b5634df52567b87d4ecb64"
+  }
+]
