@@ -22,5 +22,5 @@ contributing
 :caption: API Reference
 :maxdepth: 2
 
-jaalee_ble
+modules
 ```
