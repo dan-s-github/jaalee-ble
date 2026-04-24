@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0-rc.5 (2026-04-24)
+
+### Bug fixes
+
+- Update pypi display name and install command ([`054fa31`](https://github.com/dan-s-github/jaalee-ble/commit/054fa31806754a057a51d82efd26b62ee11d4dbb))
+
 ## v1.0.0-rc.4 (2026-04-24)
 
 ### Bug fixes
