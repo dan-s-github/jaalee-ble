@@ -1,10 +1,10 @@
 # jaalee_ble
 
 <p align="center">
-  <a href="https://github.com/dan-s-github/jaalee_ble/actions/workflows/ci.yml?query=branch%3Amain">
+  <a href="https://github.com/dan-s-github/jaalee-ble/actions/workflows/ci.yml?query=branch%3Amain">
     <img src="https://img.shields.io/github/actions/workflow/status/dan-s-github/jaalee_ble/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
   </a>
-  <a href="https://jaalee_ble.readthedocs.io">
+  <a href="https://jaalee-ble.readthedocs.io">
     <img src="https://img.shields.io/readthedocs/jaalee_ble.svg?logo=read-the-docs&logoColor=fff&style=flat-square" alt="Documentation Status">
   </a>
   <a href="https://codecov.io/gh/dan-s-github/jaalee_ble">
@@ -32,9 +32,9 @@
 
 ---
 
-**Documentation**: <a href="https://jaalee_ble.readthedocs.io" target="_blank">https://jaalee_ble.readthedocs.io </a>
+**Documentation**: <a href="https://jaalee-ble.readthedocs.io" target="_blank">https://jaalee-ble.readthedocs.io </a>
 
-**Source Code**: <a href="https://github.com/dan-s-github/jaalee_ble" target="_blank">https://github.com/dan-s-github/jaalee_ble </a>
+**Source Code**: <a href="https://github.com/dan-s-github/jaalee-ble" target="_blank">https://github.com/dan-s-github/jaalee-ble </a>
 
 ---
 

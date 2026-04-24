@@ -30,10 +30,10 @@ dependencies = [
   "habluetooth>=3.42",
   "sensor-state-data>=2.0.2",
 ]
-urls."Bug Tracker" = "https://github.com/dan-s-github/jaalee_ble/issues"
-urls.Changelog = "https://github.com/dan-s-github/jaalee_ble/blob/main/CHANGELOG.md"
-urls.documentation = "https://jaalee_ble.readthedocs.io"
-urls.repository = "https://github.com/dan-s-github/jaalee_ble"
+urls."Bug Tracker" = "https://github.com/dan-s-github/jaalee-ble/issues"
+urls.Changelog = "https://github.com/dan-s-github/jaalee-ble/blob/main/CHANGELOG.md"
+urls.documentation = "https://jaalee-ble.readthedocs.io"
+urls.repository = "https://github.com/dan-s-github/jaalee-ble"
 
 [dependency-groups]
 dev = [

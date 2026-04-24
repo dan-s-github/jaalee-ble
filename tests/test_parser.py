@@ -103,9 +103,9 @@ def make_compact_payload(
     Layout:
       [0]    - battery percent
       [1:7]  - device MAC address stored in reverse byte order
-      [7:9]  - raw temperature (big-endian uint16)
-      [9:11] - raw humidity   (big-endian uint16)
-      [11]   - optional extra byte (for 12-byte variant)
+      [7:11] - raw temperature/humidity for the 11-byte variant
+      [7]    - optional extra byte for the 12-byte variant
+      [8:12] - raw temperature/humidity for the 12-byte variant
     """
     sensor = struct.pack(">HH", raw_temp, raw_humi)
     return bytes([batt]) + mac_reversed + extra + sensor
@@ -242,14 +242,14 @@ def test_unrecognised_manufacturer_data_returns_no_data() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Tests - sample_packages.json
+# Tests - test_ble_advertisements.json
 # ---------------------------------------------------------------------------
 
 _SAMPLES = json.loads(_SAMPLE_PACKAGES_PATH.read_text())
 
 
 def _service_info_from_sample(sample: Any) -> BluetoothServiceInfoBleak:
-    """Convert a sample_packages.json entry to a BluetoothServiceInfoBleak."""
+    """Convert a test_ble_advertisements.json entry to a BluetoothServiceInfoBleak."""
     address = sample["address"]
     manufacturer_data = {
         int(k): bytes.fromhex(v) for k, v in sample["manufacturer_data"].items()
@@ -276,7 +276,7 @@ def _service_info_from_sample(sample: Any) -> BluetoothServiceInfoBleak:
     ids=[f"{s['address']}[{i}]" for i, s in enumerate(_SAMPLES)],
 )
 def test_sample_packages_parse_sensor_values(sample: Any) -> None:
-    """Each entry in sample_packages.json decodes to valid sensor readings."""
+    """Each entry in test_ble_advertisements.json decodes to valid sensor readings."""
     service_info = _service_info_from_sample(sample)
 
     result = JaaleeBluetoothDeviceData().update(service_info)
