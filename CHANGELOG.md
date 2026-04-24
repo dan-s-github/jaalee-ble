@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0-rc.3 (2026-04-24)
+
+### Bug fixes
+
+- Normalize jaalee-ble links and review wording ([`8392637`](https://github.com/dan-s-github/jaalee-ble/commit/83926379fd477a5004b1c7ca0c95c259f9040e32))
+
 ## v1.0.0-rc.2 (2026-04-23)
 
 ### Features
