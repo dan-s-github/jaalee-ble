@@ -14,9 +14,9 @@ from sensor_state_data import (
     Units,
 )
 
-from .parser import JaaleeBluetoothDeviceData
+from .parser import JaaleeBluetoothDeviceData, SensorModel
 
-__version__ = "1.0.0"
+__version__ = "1.1.0-rc.1"
 
 __all__ = [
     "BinarySensorDeviceClass",
@@ -26,6 +26,7 @@ __all__ = [
     "SensorDescription",
     "SensorDeviceClass",
     "SensorDeviceInfo",
+    "SensorModel",
     "SensorUpdate",
     "SensorValue",
     "Units",
