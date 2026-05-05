@@ -12,7 +12,7 @@ from bleak.backends.device import BLEDevice
 from bluetooth_data_tools import monotonic_time_coarse
 from habluetooth import BluetoothServiceInfoBleak
 
-from jaalee_ble import JaaleeBluetoothDeviceData
+from jaalee_ble import JaaleeBluetoothDeviceData, SensorModel
 
 _SAMPLE_PACKAGES_PATH = Path(__file__).parent / "test_ble_advertisements.json"
 
@@ -30,18 +30,18 @@ _IBEACON_MARKER = b"\xf5\x25"
 # Compact format: MAC stored reversed in bytes [1:7] of the payload.
 _MAC_REVERSED = bytes([0xFF, 0xEE, 0xDD, 0xCC, 0xBB, 0xAA])
 
-# Precomputed raw values for temp=25.0°C, humi=60.0%, batt=85
-#   raw_temp = 26214  →  round(175 * 26214 / 65535 - 45, 2) = 25.0
-#   raw_humi = 39321  →  round(100 * 39321 / 65535, 2)       = 60.0
-RAW_TEMP_25 = 26214  # 0x6666
-RAW_HUMI_60 = 39321  # 0x9999
+# Precomputed raw values for temp=25.0°C, humi=60.0%, batt=85 — SHT20 formula
+#   raw_temp = 26796  →  round(175.72 * 26796 / 65536 - 46.85, 2) = 25.0
+#   raw_humi = 34601  →  round(125 * 34601 / 65536 - 6, 2)         = 60.0
+RAW_TEMP_25 = 26796
+RAW_HUMI_60 = 34601
 BATT_85 = 85
 
-# Precomputed raw values for temp=20.0°C, humi=50.0%, batt=72
-#   raw_temp = 24341  →  round(175 * 24341 / 65535 - 45, 2) = 20.0
-#   raw_humi = 32768  →  round(100 * 32768 / 65535, 2)       = 50.0
-RAW_TEMP_20 = 24341  # 0x5F15
-RAW_HUMI_50 = 32768  # 0x8000
+# Precomputed raw values for temp=20.0°C, humi=50.0%, batt=72 — SHT20 formula
+#   raw_temp = 24931  →  round(175.72 * 24931 / 65536 - 46.85, 2) = 20.0
+#   raw_humi = 29358  →  round(125 * 29358 / 65536 - 6, 2)         = 50.0
+RAW_TEMP_20 = 24931
+RAW_HUMI_50 = 29358
 BATT_72 = 72
 
 
@@ -301,3 +301,135 @@ def test_sample_packages_parse_sensor_values(sample: Any) -> None:
         f"Humidity out of range: {values['humidity']}"
     )
     assert 0 <= values["battery"] <= 100, f"Battery out of range: {values['battery']}"
+
+
+def test_known_ibeacon_sample_decodes_expected_values() -> None:
+    """Known captured iBeacon payload decodes to stable expected values with SHT20."""
+    sample = _SAMPLES[0]
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData().update(service_info)
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    assert values["temperature"] == 24.46
+    assert values["humidity"] == 62.94
+    assert values["battery"] == 100
+    assert values["tx_power"] == -53
+
+
+def test_known_ibeacon_sample_decodes_sht31_values() -> None:
+    """Same payload decoded with SHT31 formula produces the legacy expected values."""
+    sample = _SAMPLES[0]
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData(sensor_model=SensorModel.SHT31).update(
+        service_info
+    )
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    assert values["temperature"] == 26.02
+    assert values["humidity"] == 55.15
+    assert values["battery"] == 100
+    assert values["tx_power"] == -53
+
+
+def test_user_sample_ibeacon_decodes_reported_values() -> None:
+    """User-provided iBeacon sample (SHT20 sensor) decodes correctly."""
+    sample = {
+        "name": "FE:0E:A2:CC:C4:1F",
+        "address": "FE:0E:A2:CC:C4:1F",
+        "rssi": -83,
+        "manufacturer_data": {"76": "0215ebefd08370a247c89837e7b5634df52557183852cb64"},
+        "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+        "source": "C0:49:EF:D5:37:9A",
+        "connectable": True,
+        "tx_power": 0,
+    }
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData().update(service_info)
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    assert values["temperature"] == 12.93
+    assert values["humidity"] == 21.5
+    assert values["battery"] == 100
+    assert values["tx_power"] == -53
+
+
+def test_user_sample_ibeacon_decodes_sht31_values() -> None:
+    """Same payload decoded with SHT31 formula matches reported legacy values."""
+    sample = {
+        "name": "FE:0E:A2:CC:C4:1F",
+        "address": "FE:0E:A2:CC:C4:1F",
+        "rssi": -83,
+        "manufacturer_data": {"76": "0215ebefd08370a247c89837e7b5634df52557183852cb64"},
+        "service_uuids": ["0000f525-0000-1000-8000-00805f9b34fb"],
+        "source": "C0:49:EF:D5:37:9A",
+        "connectable": True,
+        "tx_power": 0,
+    }
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData(sensor_model=SensorModel.SHT31).update(
+        service_info
+    )
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    assert values["temperature"] == pytest.approx(14.54, abs=0.05)
+    assert values["humidity"] == pytest.approx(22.0, abs=0.05)
+    assert values["battery"] == 100
+    assert values["tx_power"] == -53
+
+
+def test_vendor_doc_sample_decodes_as_documented() -> None:
+    """Official doc sample (SHT20 sensor) decodes to the correct SHT20 values."""
+    sample = {
+        "name": "C13271397295",
+        "address": "C1:32:71:39:72:95",
+        "rssi": -63,
+        "manufacturer_data": {"76": "0215ebefd08370a247c89837e7b5634df52565823d1acc64"},
+        "service_uuids": [],
+        "source": "local",
+        "connectable": True,
+        "tx_power": 0,
+    }
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData().update(service_info)
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    assert values["temperature"] == 22.83
+    assert values["humidity"] == 23.83
+    assert values["battery"] == 100
+    assert values["tx_power"] == -52
+
+
+def test_vendor_doc_sample_decodes_sht31_values() -> None:
+    """Same payload decoded with SHT31 formula matches the vendor-documented values."""
+    sample = {
+        "name": "C13271397295",
+        "address": "C1:32:71:39:72:95",
+        "rssi": -63,
+        "manufacturer_data": {"76": "0215ebefd08370a247c89837e7b5634df52565823d1acc64"},
+        "service_uuids": [],
+        "source": "local",
+        "connectable": True,
+        "tx_power": 0,
+    }
+    service_info = _service_info_from_sample(sample)
+
+    result = JaaleeBluetoothDeviceData(sensor_model=SensorModel.SHT31).update(
+        service_info
+    )
+
+    values = {k.key: v.native_value for k, v in result.entity_values.items()}
+
+    assert values["temperature"] == pytest.approx(24.39, abs=0.01)
+    assert values["humidity"] == pytest.approx(23.87, abs=0.01)
+    assert values["battery"] == 100
+    assert values["tx_power"] == -52
