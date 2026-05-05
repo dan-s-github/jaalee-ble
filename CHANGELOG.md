@@ -1,6 +1,20 @@
 # Changelog
 
+## v1.1.0-rc.1 (2026-05-05)
+
+### Features
+
+- Support sht20 and sht31 decode formulas ([`a25c7e3`](https://github.com/dan-s-github/jaalee-ble/commit/a25c7e328013a9967cd75a57ac08588661945973))
+
+### Build system
+
+- Refresh uv.lock after merging main ([`4825dae`](https://github.com/dan-s-github/jaalee-ble/commit/4825dae77e915a55721741430cc3b88afdc9ea2a))
+
 ## v1.0.0 (2026-04-24)
+
+### Documentation
+
+- Use modules wrapper for api reference ([`7735751`](https://github.com/dan-s-github/jaalee-ble/commit/7735751ade6023ecf033d176c72036cc2a26ae60))
 
 ## v1.0.0-rc.5 (2026-04-24)
 
