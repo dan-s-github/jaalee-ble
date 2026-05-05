@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from enum import Enum
 from struct import Struct
 
 from bluetooth_data_tools import short_address
@@ -35,15 +36,34 @@ _UNPACK_IBEACON = Struct(">HHbB").unpack  # raw_temp, raw_humi, tx_power, batt
 _UNPACK_COMPACT = Struct(">HH").unpack  # raw_temp, raw_humi
 
 
-def _decode_temp_humi(raw_temp: int, raw_humi: int) -> tuple[float, float]:
-    """Convert iBeacon-style raw fixed-point values to °C and %RH."""
-    temp = round(175.0 * raw_temp / 65535 - 45, 2)
-    humi = round(100.0 * raw_humi / 65535, 2)
+class SensorModel(Enum):
+    """Sensor model variant used to decode temperature/humidity values."""
+
+    SHT20 = "sht20"
+    SHT31 = "sht31"
+
+
+def _decode_temp_humi(
+    raw_temp: int, raw_humi: int, model: SensorModel = SensorModel.SHT20
+) -> tuple[float, float]:
+    """Convert Jaalee raw fixed-point values to °C and %RH."""
+    if model is SensorModel.SHT31:
+        # SHT31 datasheet (Sensirion): divisor is 2^16 - 1 = 65535
+        temp = round(175.0 * raw_temp / 65535 - 45, 2)
+        humi = round(100.0 * raw_humi / 65535, 2)
+    else:
+        # SHT20 datasheet (Sensirion): divisor is 2^16 = 65536
+        temp = round(175.72 * raw_temp / 65536 - 46.85, 2)
+        humi = round(125.0 * raw_humi / 65536 - 6, 2)
     return temp, humi
 
 
 class JaaleeBluetoothDeviceData(BluetoothData):
     """Data parser for Jaalee Bluetooth devices."""
+
+    def __init__(self, sensor_model: SensorModel = SensorModel.SHT20) -> None:
+        super().__init__()
+        self._sensor_model = sensor_model
 
     def _start_update(self, service_info: BluetoothServiceInfoBleak) -> None:
         """Update from BLE advertisement data."""
@@ -73,7 +93,7 @@ class JaaleeBluetoothDeviceData(BluetoothData):
     def _parse_ibeacon(self, payload: bytes, address: str) -> None:
         """Parse the 24-byte Jaalee iBeacon manufacturer payload."""
         raw_temp, raw_humi, tx_power, batt = _UNPACK_IBEACON(payload[18:])
-        temp, humi = _decode_temp_humi(raw_temp, raw_humi)
+        temp, humi = _decode_temp_humi(raw_temp, raw_humi, self._sensor_model)
 
         self._setup_device(address)
         self.set_precision(2)
@@ -110,7 +130,7 @@ class JaaleeBluetoothDeviceData(BluetoothData):
             return False
 
         raw_temp, raw_humi = _UNPACK_COMPACT(payload[-4:])
-        temp, humi = _decode_temp_humi(raw_temp, raw_humi)
+        temp, humi = _decode_temp_humi(raw_temp, raw_humi, self._sensor_model)
 
         self._setup_device(address)
         self.set_precision(2)
